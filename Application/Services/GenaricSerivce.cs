@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace Application.Services
 {
-    internal class GenaricSerivce<TEntity, TDto, TCreate, TUpdate> : IGenaricSerivce<TEntity, TDto, TCreate, TUpdate> where TEntity : AggregateEntity
+    internal class GenaricSerivce<TEntity, TDto, TCreate, TUpdate> : IGenaricSerivce<TEntity, TDto, TCreate, TUpdate> where TEntity : BaseEntity
     {
         protected readonly IRepository<TEntity> _repository;
         protected readonly IMapper _mapper;
@@ -27,7 +27,7 @@ namespace Application.Services
             _repository.Delete(entity);
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(int id)
         {
             var entity = await _repository.FirstOrDefualt(c => c.Id == id);
             _repository.Delete(entity);

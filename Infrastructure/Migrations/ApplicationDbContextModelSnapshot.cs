@@ -17,16 +17,112 @@ namespace Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "6.0.25")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Domain.Categories.Category", b =>
+            modelBuilder.Entity("Domain.Events.Event", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AvailableTickets")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("StartEventAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdateOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("Domain.Events.EventTranslation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("EventDescription")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventTranslations");
+                });
+
+            modelBuilder.Entity("Domain.Events.UserEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserEvent");
+                });
+
+            modelBuilder.Entity("Domain.Roles.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -47,256 +143,100 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("c77e3e74-22ff-4032-aa44-716ca223f7bf"),
-                            CreatedBy = "System",
-                            CreatedOnUtc = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Car"
-                        },
-                        new
-                        {
-                            Id = new Guid("aa78790e-9d22-4243-a735-f96ac103d491"),
-                            CreatedBy = "System",
-                            CreatedOnUtc = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "House"
-                        });
+                    b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Domain.CustomFields.CustomField", b =>
+            modelBuilder.Entity("Domain.Users.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdateOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CustomField");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("d84ec479-b38d-433f-ba57-2d3d2e4a3b29"),
-                            CreatedBy = "System",
-                            CreatedOnUtc = new DateTime(2023, 4, 30, 21, 8, 12, 471, DateTimeKind.Utc).AddTicks(1257),
-                            Name = "House Fields"
-                        },
-                        new
-                        {
-                            Id = new Guid("d84ec479-b38d-433f-ba57-2d3d2e4a3b91"),
-                            CreatedBy = "System",
-                            CreatedOnUtc = new DateTime(2023, 4, 30, 21, 8, 12, 471, DateTimeKind.Utc).AddTicks(1267),
-                            Name = "Engine specs"
-                        });
-                });
-
-            modelBuilder.Entity("Domain.CustomFields.CustomFieldKey", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CustomFieldId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Key")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomFieldId");
-
-                    b.ToTable("CustomFieldKey");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("991cd085-9877-493c-838b-31689d030a84"),
-                            CustomFieldId = new Guid("d84ec479-b38d-433f-ba57-2d3d2e4a3b91"),
-                            Key = "engine size"
-                        },
-                        new
-                        {
-                            Id = new Guid("991cd085-9877-493c-838b-31689d030a86"),
-                            CustomFieldId = new Guid("d84ec479-b38d-433f-ba57-2d3d2e4a3b91"),
-                            Key = "engine type"
-                        },
-                        new
-                        {
-                            Id = new Guid("991cd085-9877-493c-838b-31689d030a87"),
-                            CustomFieldId = new Guid("d84ec479-b38d-433f-ba57-2d3d2e4a3b29"),
-                            Key = "Type"
-                        });
-                });
-
-            modelBuilder.Entity("Domain.CustomFields.CustomFieldValue", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CustomFieldKeyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProducId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomFieldKeyId");
-
-                    b.HasIndex("ProducId");
-
-                    b.ToTable("CustomFieldValue");
-                });
-
-            modelBuilder.Entity("Domain.Products.Product", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DurationInDays")
                         .HasColumnType("int");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("StartAppearingDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdateOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("Domain.Products.ProductTranslation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CoreId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CoreId");
+                    b.HasIndex("Email")
+                        .IsUnique();
 
-                    b.ToTable("ProductTranslation");
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Domain.CustomFields.CustomFieldKey", b =>
+            modelBuilder.Entity("Domain.Events.Event", b =>
                 {
-                    b.HasOne("Domain.CustomFields.CustomField", "CustomField")
-                        .WithMany("CustomFieldKeys")
-                        .HasForeignKey("CustomFieldId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CustomField");
-                });
-
-            modelBuilder.Entity("Domain.CustomFields.CustomFieldValue", b =>
-                {
-                    b.HasOne("Domain.CustomFields.CustomFieldKey", "CustomFieldKey")
+                    b.HasOne("Domain.Users.User", "User")
                         .WithMany()
-                        .HasForeignKey("CustomFieldKeyId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Products.Product", "Product")
-                        .WithMany("CustomFieldValues")
-                        .HasForeignKey("ProducId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CustomFieldKey");
-
-                    b.Navigation("Product");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Products.Product", b =>
+            modelBuilder.Entity("Domain.Events.EventTranslation", b =>
                 {
-                    b.HasOne("Domain.Categories.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Domain.Products.ProductTranslation", b =>
-                {
-                    b.HasOne("Domain.Products.Product", "Core")
+                    b.HasOne("Domain.Events.Event", "Event")
                         .WithMany("Translations")
-                        .HasForeignKey("CoreId")
+                        .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Core");
+                    b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("Domain.Categories.Category", b =>
+            modelBuilder.Entity("Domain.Events.UserEvent", b =>
                 {
-                    b.Navigation("Products");
+                    b.HasOne("Domain.Events.Event", "Event")
+                        .WithMany("Users")
+                        .HasForeignKey("EventId");
+
+                    b.HasOne("Domain.Users.User", "User")
+                        .WithMany("Events")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.CustomFields.CustomField", b =>
+            modelBuilder.Entity("Domain.Users.User", b =>
                 {
-                    b.Navigation("CustomFieldKeys");
+                    b.HasOne("Domain.Roles.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId");
+
+                    b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Domain.Products.Product", b =>
+            modelBuilder.Entity("Domain.Events.Event", b =>
                 {
-                    b.Navigation("CustomFieldValues");
-
                     b.Navigation("Translations");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Domain.Users.User", b =>
+                {
+                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }

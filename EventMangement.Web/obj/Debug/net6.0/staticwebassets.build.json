@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "gdJqthb47qpRIcmwEuuxOtqVWeM5IHkvDSCW6C68jXI=",
+  "Source": "EventMangement.Web",
+  "BasePath": "_content/EventMangement.Web",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
